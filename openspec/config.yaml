@@ -1,0 +1,37 @@
+schema: spec-driven
+
+context: |
+  Projeto: InovAI System
+  Objetivo: recriar um ERP/POS legado Laravel 8 + MySQL como plataforma moderna Laravel 13 + PostgreSQL + Nuxt 4.
+  Legado de referência: .factory/stude/sistema
+  Backend alvo: Laravel 13 API-first em backend/
+  Frontend alvo: Nuxt 4 separado em frontend/
+  Banco alvo: PostgreSQL
+  Auth: Laravel Sanctum SPA cookies via nuxt-auth-sanctum
+  Permissões: Spatie Permission + business_id
+  API: REST JSON com Resources, Form Requests, Policies, paginação e filtros server-side
+  Tenancy: business_id como fronteira inicial
+  UI: Nuxt UI v4 dashboard, sem copiar Blade/Dashmin
+  Estratégia: mapear tudo, implementar por fases de domínio
+  Dados: sem importação inicial; usar seeders mínimos e legado como referência
+
+rules:
+  proposal:
+    - Sempre declarar objetivos, não-objetivos, impacto e capacidades afetadas.
+    - Tratar o legado como referência de domínio, não como código a copiar.
+    - Destacar riscos fiscais, tenancy e storage quando relevantes.
+
+  design:
+    - Explicar decisões técnicas com alternativas consideradas.
+    - Incluir impacto em auth, tenancy, fiscal, storage e validação.
+    - Evitar decisões que acoplem o frontend Nuxt ao backend Laravel.
+
+  specs:
+    - Usar SHALL/MUST para requisitos normativos.
+    - Cada requisito deve ter pelo menos um cenário testável.
+    - Cobrir isolamento por business_id quando o recurso for tenant-owned.
+
+  tasks:
+    - Agrupar tarefas por domínio/fase.
+    - Cada tarefa deve ser verificável.
+    - Incluir validação/testes ao final de cada fase.

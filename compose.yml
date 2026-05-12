@@ -1,0 +1,109 @@
+# Local development orchestration for the modernized ERP platform.
+#
+# Services:
+#   - postgres  : PostgreSQL 16 with a tenant-friendly database
+#   - redis     : Redis 7 for cache/queue/session backends
+#   - backend   : Laravel 13 API served via `artisan serve`
+#   - frontend  : Nuxt 4 dev server (added once frontend/ is scaffolded in task 1.8)
+#
+# Usage:
+#   docker compose up -d postgres redis
+#   docker compose up backend
+#   docker compose up frontend
+#
+# The compose file targets local development. Production deployments should
+# build optimised images via dedicated multi-stage Dockerfiles.
+
+name: inovai
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: inovai-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-inovai}
+      POSTGRES_USER: ${POSTGRES_USER:-inovai}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-inovai}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-inovai} -d ${POSTGRES_DB:-inovai}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    container_name: inovai-redis
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: inovai-backend
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      APP_ENV: ${APP_ENV:-local}
+      APP_DEBUG: ${APP_DEBUG:-true}
+      DB_CONNECTION: pgsql
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_DATABASE: ${POSTGRES_DB:-inovai}
+      DB_USERNAME: ${POSTGRES_USER:-inovai}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-inovai}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      CACHE_STORE: redis
+      SESSION_DRIVER: redis
+      QUEUE_CONNECTION: redis
+      SANCTUM_STATEFUL_DOMAINS: ${SANCTUM_STATEFUL_DOMAINS:-localhost:3000,127.0.0.1:3000}
+      SESSION_DOMAIN: ${SESSION_DOMAIN:-localhost}
+    ports:
+      - "${BACKEND_PORT:-8000}:8000"
+    volumes:
+      - ./backend:/var/www/html
+      - backend-vendor:/var/www/html/vendor
+
+  # frontend:
+  #   build:
+  #     context: ./frontend
+  #     dockerfile: Dockerfile
+  #   container_name: inovai-frontend
+  #   restart: unless-stopped
+  #   depends_on:
+  #     - backend
+  #   environment:
+  #     NUXT_PUBLIC_API_BASE_URL: ${NUXT_PUBLIC_API_BASE_URL:-http://localhost:8000}
+  #     NUXT_PUBLIC_SANCTUM_BASE_URL: ${NUXT_PUBLIC_SANCTUM_BASE_URL:-http://localhost:8000}
+  #     HOST: 0.0.0.0
+  #     PORT: 3000
+  #   ports:
+  #     - "${FRONTEND_PORT:-3000}:3000"
+  #   volumes:
+  #     - ./frontend:/app
+  #     - frontend-node-modules:/app/node_modules
+
+volumes:
+  postgres-data:
+  redis-data:
+  backend-vendor:
+  # frontend-node-modules:
