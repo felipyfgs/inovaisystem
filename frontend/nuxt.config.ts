@@ -12,6 +12,17 @@ export default defineNuxtConfig({
 
   css: ['~/assets/css/main.css'],
 
+  // Public runtime config is exposed to the client and can be overridden at
+  // runtime via NUXT_PUBLIC_* environment variables.
+  runtimeConfig: {
+    public: {
+      // Base URL of the Laravel API (used by $fetch / useFetch helpers).
+      apiBaseUrl: 'http://localhost:8000',
+      // Base URL used to acquire the Sanctum CSRF cookie (phase 2).
+      sanctumBaseUrl: 'http://localhost:8000'
+    }
+  },
+
   routeRules: {
     '/api/**': {
       cors: true

@@ -15,9 +15,9 @@ return Application::configure(basePath: dirname(__DIR__))
         apiPrefix: 'api',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        // Sanctum's stateful API middleware is registered in phase 2 once the
-        // package is installed (see task 2.1). Until then the API group uses
-        // Laravel's default API middleware stack.
+        // Enable Sanctum SPA cookies for any /api request originating from a
+        // configured stateful domain (see config/sanctum.php).
+        $middleware->statefulApi();
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         // Force JSON responses for API requests so the Nuxt frontend can

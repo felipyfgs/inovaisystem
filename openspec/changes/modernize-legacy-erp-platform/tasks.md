@@ -7,13 +7,13 @@
 - [x] 1.5 Configure CORS, session, and cookie settings for Nuxt-to-Laravel local development
 - [x] 1.6 Establish REST API response conventions with Resources, Form Requests, Policies, pagination, sorting, and filtering
 - [x] 1.7 Add backend validation commands for tests, formatting, and static checks available in the project
-- [ ] 1.8 Create Nuxt 4 frontend from the dashboard template in `frontend/`
-- [ ] 1.9 Configure Nuxt runtime API base URL and local development scripts
-- [ ] 1.10 Verify backend and frontend can run locally and communicate through a health/API endpoint
+- [x] 1.8 Create Nuxt 4 frontend from the dashboard template in `frontend/`
+- [x] 1.9 Configure Nuxt runtime API base URL and local development scripts
+- [x] 1.10 Verify backend and frontend can run locally and communicate through a health/API endpoint
 
 ## 2. Authentication and Access Control
 
-- [ ] 2.1 Install and configure Laravel Sanctum for SPA authentication
+- [x] 2.1 Install and configure Laravel Sanctum for SPA authentication
 - [ ] 2.2 Install and configure the Nuxt Sanctum integration
 - [ ] 2.3 Implement login, logout, current-user, and CSRF initialization endpoints
 - [ ] 2.4 Implement frontend auth state and route protection
